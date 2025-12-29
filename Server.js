@@ -6,40 +6,41 @@ const app = express();
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send("Hello World");
+    res.status(200).send("Hello World");
 });
 
-app.get('/getItems', (req, res) => {
-    const items = getAll();
-    console.log("The items are ", JSON.stringify(items));
-    res.json(items);
+app.get('/getAllUsers', async (req, res) => {
+    const items = await getAll();
+    console.log("The items are ", items);
+    res.status(items[1].status).json(items[0]);
 })
 
-app.get('/getItems/:name', (req, res) => {
+app.get('/getUser/:name', async (req, res) => {
     const { name } = req.params;
-    const item = getByName(name);
-    res.json(item);
+    const item = await getByName(name);
+    res.status(item[1].status).json(item[0]);
 })
 
-app.post('/saveItems', (req, res) => {
+app.post('/saveUser', async (req, res) => {
     const items = req.body;
     console.log("the data is ", items);
-    insert(items);
-    res.send(`The ${items} data is inserted`);
+    const item = await insert(items);
+    res.status(item[1].status).json(item[0]);
 })
 
-app.put('/updateAge/:name', (req, res) => {
+app.put('/updateAge/:name', async (req, res) => {
     const { name } = req.params;
     const { age } = req.query;
-    updateAge(name, age);
-    res.send(`${name} data is updated ...`);
+    const data = await updateAge(name, age);
+    res.status(data[1].status).json(data[0]);
 })
 
-app.delete('/delete', (req, res) => {
+app.delete('/delete', async (req, res) => {
     let { name } = req.query;
 
     console.log(`Delete ${name} ...`);
-    let status = remove(name);
+    let status = await remove(name);
+    // res.send(status);
     console.log("THe status isssssssssssssssssss ", status);
 
     if (status)
